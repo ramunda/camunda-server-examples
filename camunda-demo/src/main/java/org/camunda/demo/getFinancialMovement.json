@@ -1,0 +1,40 @@
+{
+	"movement":[
+		{
+			"amount":"32.97",
+			"balance":"104.82",
+			"payableAmount":"32.97",
+			"invoice":{"id":"284452536"},
+			"paymentLimitDate":"2018-01-03T00:00:00Z",
+			"saftDocument":"FT 201802/624373",
+			"status":"Não regularizado"
+		},
+		{
+			"amount":"32.97",
+			"balance":"71.85",
+			"payableAmount":"32.97",
+			"invoice":{"id":"284452169"},
+			"paymentLimitDate":"2017-12-04T00:00:00Z",
+			"saftDocument":"FT 201802/624266",
+			"status":"Não regularizado"
+		},
+		{
+			"amount":"32.97",
+			"balance":"38.88",
+			"payableAmount":"32.97",
+			"invoice":{"id":"284452127"},
+			"paymentLimitDate":"2017-11-03T00:00:00Z",
+			"saftDocument":"FT 201802/624251",
+			"status":"Não regularizado"
+		},
+		{
+			"amount":"5.91",
+			"balance":"5.91",
+			"payableAmount":"5.91",
+			"invoice":{"id":"284452087"},
+			"paymentLimitDate":"2017-10-03T23:00:00Z",
+			"saftDocument":"FT 201802/624220",
+			"status":"Não regularizado"
+		}
+	]
+}
