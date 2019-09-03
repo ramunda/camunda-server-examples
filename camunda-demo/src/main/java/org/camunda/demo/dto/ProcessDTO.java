@@ -34,7 +34,7 @@ public class ProcessDTO {
 		this.endDate = proc.getEndDate();
 		this.variables = parseToParamDto(proc.getVariables());
 		this.milestones = parseMilestones(proc.getMilestones());
-		this.activeTask = proc.getActiveTask() != null ? new TaskDTO(proc.getActiveTask()) : null; //TODO: ERRO ?
+		this.activeTask = proc.getActiveTask() != null ? new TaskDTO(proc.getActiveTask()) : null;
 		this.state = proc.getState();
 	}
 

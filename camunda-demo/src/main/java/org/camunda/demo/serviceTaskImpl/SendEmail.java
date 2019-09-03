@@ -14,7 +14,13 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 
 public class SendEmail implements JavaDelegate{
-	
+
+    // Need to set this variables
+    private String username = ""; // email of sender
+    private String password = ""; // password of sender
+    private String emailFrom = ""; // email of sender
+    private String emailTo = ""; // email of receiver
+
 	@Override
 	public void execute(DelegateExecution execution) throws Exception {
 		
@@ -31,14 +37,14 @@ public class SendEmail implements JavaDelegate{
         Session session = Session.getInstance(prop,
         	      new javax.mail.Authenticator() {
         	        protected PasswordAuthentication getPasswordAuthentication() {
-        	            return new PasswordAuthentication("ramundaisel@gmail.com", "os3mosqueteiros");
+        	            return new PasswordAuthentication(username,password);
         	        }
         	      });
         
        try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("ramundaisel@gmail.com"));
-            message.setRecipients(Message.RecipientType.TO,InternetAddress.parse("b9294825@urhen.com"));
+            message.setFrom(new InternetAddress(emailFrom));
+            message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(emailTo));
             message.setSubject("Detalhes pagamento");
             message.setText("Os dados para pagamento são: \n Entidade: " + entity +"\nReferência: " + reference + "\nValor: " + amount); 
             Transport.send(message);

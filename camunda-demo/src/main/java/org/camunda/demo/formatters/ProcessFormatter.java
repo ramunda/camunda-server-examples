@@ -16,7 +16,7 @@ import static java.util.Collections.emptyList;
  * Key: Process Definition Key, Value: ProcessDefinition instance with input and output variables respectively 
  */
 @Component
-public class OutputFormatter {
+public class ProcessFormatter {
 	
 	public HashMap<String,ProcessDefinition> formatter;
 	

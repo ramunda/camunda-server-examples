@@ -17,7 +17,7 @@ import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.history.HistoricProcessInstance;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
-import org.camunda.demo.formatters.OutputFormatter;
+import org.camunda.demo.formatters.ProcessFormatter;
 import org.camunda.demo.ProcessDefinition;
 import org.camunda.demo.dto.ParameterDTO;
 import org.camunda.demo.exception.exceptions.BasicException;
@@ -60,27 +60,25 @@ public class ProcessService {
     private HistoryService historyService;
 	
 	@Autowired
-    private OutputFormatter outputFormatter;
+    private ProcessFormatter processFormatter;
 
 	public ProcessModel startProcessInstance(ProcessModel proc) throws BasicException{
 		Map<String, Object> variables = new HashMap<String, Object>();
 		String procDefKey = proc.getProcDefKey();
 		
-		if(!outputFormatter.formatter.containsKey(procDefKey))
+		if(!processFormatter.formatter.containsKey(procDefKey))
 			throw new InvalidParametersException("Don't exist any formatter defined for Process Definition Key: " + procDefKey);
 			
-		//TODO: MUDAR PARA STREAM ??? 
-		List<String> procVars = outputFormatter.formatter.get(procDefKey).getInVariables();
+		List<String> procVars = processFormatter.formatter.get(procDefKey).getInVariables();
 		List<ParameterModel> inVars = proc.getVariables().collect(Collectors.toList());
-		boolean found = false;
-		
+		boolean found;
+
 		for(String s : procVars) {
 			found = false;
 			for(ParameterModel p : inVars) {
 				if(p.getKey().equals(s)) {
 					variables.put(p.getKey(), p.getValue());
 					found = true;
-					continue;
 				}	
 			}
 			if(!found)
@@ -201,7 +199,7 @@ public class ProcessService {
 
 	public Stream<ProcessModel> procHistory(String procDefKey, String filterName, String filterValue) throws BasicException {
 		
-		if(!outputFormatter.formatter.containsKey(procDefKey))
+		if(!processFormatter.formatter.containsKey(procDefKey))
 			throw new InvalidParametersException("Don't exist any formatter defined for Process Definition Key: " + procDefKey);
 		
 		List<HistoricProcessInstance> hpis = null;
@@ -235,7 +233,7 @@ public class ProcessService {
 			
 		String procDefKey = pi.getProcessDefinitionKey();
 
-		if(!outputFormatter.formatter.containsKey(procDefKey))
+		if(!processFormatter.formatter.containsKey(procDefKey))
 			throw new InvalidParametersException("Don't exist any formatter defined for Process Definition Key: " + procDefKey);
 		
 		Stream<ParameterModel> outputVariables = getProcessVariables(pi.getId(),procDefKey);
@@ -313,7 +311,7 @@ public class ProcessService {
 				.filter( v -> v.getTaskId() == null)
 				.map( v -> new ParameterModel(v.getName(),v.getValue()));
 		
-		ProcessDefinition pd = outputFormatter.formatter.get(procDefKey);
+		ProcessDefinition pd = processFormatter.formatter.get(procDefKey);
 		
 		List<String> outputVariables = new ArrayList<String>();
 		outputVariables.addAll(pd.getInVariables());

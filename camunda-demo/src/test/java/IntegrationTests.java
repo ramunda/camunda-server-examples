@@ -18,7 +18,7 @@ import org.camunda.demo.dto.*;
 import org.camunda.demo.exception.exceptions.CamundaException;
 import org.camunda.demo.exception.exceptions.DataNotFoundException;
 import org.camunda.demo.exception.exceptions.InvalidParametersException;
-import org.camunda.demo.formatters.OutputFormatter;
+import org.camunda.demo.formatters.ProcessFormatter;
 import org.camunda.demo.repo.ProcessRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +29,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
-import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -60,7 +59,7 @@ public class IntegrationTests {
     private TaskService taskService;
 	
 	@Autowired
-	private OutputFormatter outputFormatter;
+	private ProcessFormatter processFormatter;
 	
 	@Test
 	public void startProcInstanceSuccess() throws Exception{
@@ -260,7 +259,7 @@ public class IntegrationTests {
 	public void procHistorySucess() throws Exception{
 		try {
 			//Told that this process need an input variable named "user"
-			outputFormatter.formatter.get("Process_05r67sz").setInVariables(singletonList("user"));
+			processFormatter.formatter.get("Process_05r67sz").setInVariables(singletonList("user"));
 			
 			//Create two process instances and call end-point with no filter - should return the two instances
 			Map<String, Object> p1vars = new HashMap<>();
@@ -371,7 +370,7 @@ public class IntegrationTests {
 			assertThat(procs).isEmpty();
 		}finally {
 			//Restore process input variables to none 
-			outputFormatter.formatter.get("Process_05r67sz").setInVariables(emptyList());
+			processFormatter.formatter.get("Process_05r67sz").setInVariables(emptyList());
 		}
 	}
 	
@@ -379,7 +378,7 @@ public class IntegrationTests {
 	public void startProcInstanceInvalidParams() throws Exception{
 		try {
 			//Need a variable user that is not passed
-			outputFormatter.formatter.get("Process_05r67sz").setInVariables(singletonList("user"));
+			processFormatter.formatter.get("Process_05r67sz").setInVariables(singletonList("user"));
 			
 			ProcessDTO processDTO = new ProcessDTO();
 			processDTO.setProcDefKey("Process_05r67sz");
@@ -393,7 +392,7 @@ public class IntegrationTests {
 			
 			assertThat(result.getResolvedException()).isInstanceOf(InvalidParametersException.class);
 		}finally{
-			outputFormatter.formatter.get("Process_05r67sz").setInVariables(emptyList());
+			processFormatter.formatter.get("Process_05r67sz").setInVariables(emptyList());
 		}
 	}
 	
@@ -513,7 +512,7 @@ public class IntegrationTests {
     @Test
     public void startProcInstanceNoDeployedProcDefKey() throws Exception{
 	    try {
-	        outputFormatter.formatter.put("Process_1212", new ProcessDefinition(emptyList(),emptyList()));
+	        processFormatter.formatter.put("Process_1212", new ProcessDefinition(emptyList(),emptyList()));
 
             ProcessDTO processDTO = new ProcessDTO();
             processDTO.setProcDefKey("Process_1212");
@@ -528,7 +527,7 @@ public class IntegrationTests {
             assertThat(result.getResolvedException()).isInstanceOf(CamundaException.class);
 
         }finally {
-            outputFormatter.formatter.remove("Process_1212");
+            processFormatter.formatter.remove("Process_1212");
         }
 	}
 
@@ -553,7 +552,7 @@ public class IntegrationTests {
     @Test
     public void getProcInfoInvalidProcDefKey() throws Exception{
 	    try {
-	        outputFormatter.formatter.remove("Process_05r67sz");
+	        processFormatter.formatter.remove("Process_05r67sz");
 
             ProcessInstance pi = runtimeService.startProcessInstanceByKey("Process_05r67sz", (Map<String, Object>) null);
 
@@ -564,7 +563,7 @@ public class IntegrationTests {
             assertThat(result.getResolvedException()).isInstanceOf(InvalidParametersException.class);
 
         }finally {
-            outputFormatter.formatter.put("Process_05r67sz",new ProcessDefinition(emptyList(),
+            processFormatter.formatter.put("Process_05r67sz",new ProcessDefinition(emptyList(),
                     Arrays.asList("n1","n2","toSum","result")));
         }
 	}
