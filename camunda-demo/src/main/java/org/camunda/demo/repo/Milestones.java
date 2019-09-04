@@ -41,4 +41,14 @@ public class Milestones {
 		this.milestoneName = milestoneName;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(obj == null) return false;
+
+		Milestones m = (Milestones) obj;
+		return this.milestoneId.equals(m.getMilestoneId()) &&
+				this.milestoneName.equals(m.getMilestoneName()) &&
+				Arrays.equals(this.tasks, m.getTasks());
+	}
 }

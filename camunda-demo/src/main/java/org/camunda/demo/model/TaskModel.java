@@ -26,10 +26,6 @@ public class TaskModel {
 		this.inParameters = inParams;
 		this.outParameters = outParams;
 	}
-	
-	public TaskModel(Stream<ParameterModel> outParams) {
-		this.outParameters = outParams;
-	}
 
 	public String getId() {
 		return id;

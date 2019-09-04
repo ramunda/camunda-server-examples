@@ -26,16 +26,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes= CamundaApplication.class)
@@ -43,7 +44,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Transactional
 @Rollback(true)
 @Sql(executionPhase = ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:beforeTestRun.sql")
-
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class IntegrationTests {
 	
 	@Autowired
@@ -596,7 +597,7 @@ public class IntegrationTests {
         String contentAsString = result.getResponse().getContentAsString();
         ProcessDTO proc = mapper.readValue(contentAsString, ProcessDTO.class);
 
-        List<String> expectMilestones = Arrays.asList("Movimentos","Referência Multibanco");
+        List<String> expectMilestones = Arrays.asList("Movimentos","Referencia Multibanco");
         List<ParameterDTO> expectVars = Arrays.asList(
                 new ParameterDTO("client","263884205"),
                 new ParameterDTO("clientDetails", clientDetails),
@@ -641,7 +642,7 @@ public class IntegrationTests {
         task = mapper.readValue(contentAsString, TaskDTO.class);
 
         assertThat(task.getId()).isNotNull();
-        assertThat(task.getMilestone()).isEqualTo("Referência Multibanco");
+        assertThat(task.getMilestone()).isEqualTo("Referencia Multibanco");
         assertThat(task.getInParameters()).isEmpty();
         assertThat(task.getOutParameters()).containsExactlyInAnyOrderElementsOf(
                 Arrays.asList(
@@ -652,4 +653,75 @@ public class IntegrationTests {
         );
 
     }
+
+	@Test
+	public void fullTestProcess_02jaj7t() throws Exception{
+		ProcessDTO processDTO = new ProcessDTO();
+		processDTO.setProcDefKey("Process_02jaj7t");
+
+		ObjectMapper mapper = new ObjectMapper();
+		String asString = mapper.writeValueAsString(processDTO);
+
+		MvcResult result = mockMvc.perform(
+				post("/camunda/process").contentType(MediaType.APPLICATION_JSON).content(asString)
+		).andExpect(status().isOk()).andReturn();
+
+		String contentAsString = result.getResponse().getContentAsString();
+		ProcessDTO proc = mapper.readValue(contentAsString, ProcessDTO.class);
+
+		assertThat(proc.getProcInstId()).isNotNull();
+		assertThat(proc.getProcDefKey()).isEqualTo("Process_02jaj7t");
+		assertThat(proc.getMilestones()).isEmpty();
+		assertThat(proc.getVariables()).isEmpty();
+
+		TaskDTO task = proc.getActiveTask();
+
+		List<ParameterDTO> inParams = Arrays.asList(
+				new ParameterDTO("name", null),
+				new ParameterDTO("birthdate", null),
+				new ParameterDTO("gender", null),
+				new ParameterDTO("notify", null),
+				new ParameterDTO("email", null)
+		);
+
+		assertThat(task.getId()).isNotNull();
+		assertThat(task.getMilestone()).isNull();
+		assertThat(task.getInParameters()).containsExactlyInAnyOrderElementsOf(inParams);
+		assertThat(task.getOutParameters()).isEmpty();
+
+
+		task.setInParameters(
+                Arrays.asList(
+                        new ParameterDTO("name", "Tiago"),
+                        new ParameterDTO("birthdate", "12/04/1997"),
+                        new ParameterDTO("gender", "M"),
+                        new ParameterDTO("notify", false),
+                        new ParameterDTO("email", "t@mail.com")
+                )
+        );
+
+        asString = mapper.writeValueAsString(task);
+
+        result = mockMvc.perform(
+                post("/camunda/process/{processId}/next",proc.getProcInstId())
+                        .param("advance", "true")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asString)
+        ).andExpect(status().isOk()).andReturn();
+
+        contentAsString = result.getResponse().getContentAsString();
+        task = mapper.readValue(contentAsString, TaskDTO.class);
+
+        assertThat(task.getId()).isNotNull();
+        assertThat(task.getMilestone()).isNull();
+        assertThat(task.getInParameters()).isEmpty();
+        assertThat(task.getOutParameters()).containsExactlyInAnyOrderElementsOf(
+                Arrays.asList(
+                        new ParameterDTO("amount","37.94"),
+                        new ParameterDTO("entity","11111"),
+                        new ParameterDTO("reference","222222222222")
+                )
+        );
+	}
+
 }

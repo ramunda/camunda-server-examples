@@ -15,6 +15,7 @@ public class InsertClient implements TaskListener {
 		inputParameters.add(new ParameterDTO("birthdate",null));
 		inputParameters.add(new ParameterDTO("gender",null));
 		inputParameters.add(new ParameterDTO("notify",null));
+		inputParameters.add(new ParameterDTO("email",null));
 		
 		delegateTask.setVariableLocal("inputParameters",inputParameters);
 	}

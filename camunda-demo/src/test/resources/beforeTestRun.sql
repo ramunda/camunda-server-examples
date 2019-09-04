@@ -19,4 +19,4 @@ INSERT INTO process_milestones
 	VALUES('Process_08rb4ct','{"3","4"}');
 
 INSERT INTO milestones
-	VALUES('3','Movimentos','{"Task_1wayfyf"}'),('4','Referência Multibanco','{"Task_19epn2w"}');
+	VALUES('3','Movimentos','{"Task_1wayfyf"}'),('4','Referencia Multibanco','{"Task_19epn2w"}');

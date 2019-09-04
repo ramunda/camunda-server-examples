@@ -19,7 +19,6 @@ public class SendEmail implements JavaDelegate{
     private String username = ""; // email of sender
     private String password = ""; // password of sender
     private String emailFrom = ""; // email of sender
-    private String emailTo = ""; // email of receiver
 
 	@Override
 	public void execute(DelegateExecution execution) throws Exception {
@@ -27,7 +26,8 @@ public class SendEmail implements JavaDelegate{
 		String amount = (String) execution.getVariable("amount");
 		String entity = (String) execution.getVariable("entity");
 		String reference = (String) execution.getVariable("reference");
-		
+		String emailTo = (String) execution.getVariable("email");
+
 		Properties prop = System.getProperties();
         prop.put("mail.smtp.auth", "true");
         prop.put("mail.smtp.starttls.enable", "true");
