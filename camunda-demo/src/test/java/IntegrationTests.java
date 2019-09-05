@@ -723,6 +723,8 @@ public class IntegrationTests {
                 )
         );
 
+		asString = mapper.writeValueAsString(task);
+
 		result = mockMvc.perform(
 				post("/camunda/process/{processId}/next",proc.getProcInstId())
 						.param("advance", "true")
