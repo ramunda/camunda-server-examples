@@ -10,7 +10,7 @@ Generic camunda server with examples
 5. Fill the fields with username and password refering to the created database in application.properties.
 6. Create the necessary tables in POSTGRES. You can achive this by running the sript in the file “TableCreation.sql” from the package "repo".
 7. Fill the created tables from the step before by executing the scripts in the file “TableInserts.sql” from the package "repo".
-8. Some service tasks require some fields to be previously fullfilled. An example is the process "generatePaymentRefAndNotification", this process requires that before running the server some values must be attributed to the fields of the service task "SendEmail" and changing the values of SMTP host and SMTP port.
+8. [IMPORTANT!] Some service tasks require some fields to be previously fullfilled. An example is the process "generatePaymentRefAndNotification", this process requires that before running the server some values must be attributed to the fields of the service task "SendEmail" and changing the values of SMTP host and SMTP port.
 9. Run the Application by executing the class "CamundaApplication".
 
 ### Tests
