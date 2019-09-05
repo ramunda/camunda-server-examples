@@ -722,6 +722,18 @@ public class IntegrationTests {
                         new ParameterDTO("reference","222222222222")
                 )
         );
+
+		result = mockMvc.perform(
+				post("/camunda/process/{processId}/next",proc.getProcInstId())
+						.param("advance", "true")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(asString)
+		).andExpect(status().isOk()).andReturn();
+
+		contentAsString = result.getResponse().getContentAsString();
+		task = mapper.readValue(contentAsString, TaskDTO.class);
+
+		assertThat(task.getId()).isNull();
 	}
 
 }

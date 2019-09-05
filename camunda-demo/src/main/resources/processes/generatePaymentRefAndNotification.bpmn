@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_01nl43x" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.1.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_01nl43x" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.2.4">
   <bpmn:process id="Process_02jaj7t" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>SequenceFlow_052lsmi</bpmn:outgoing>
@@ -10,6 +10,7 @@
         <camunda:taskListener class="org.camunda.demo.listeners.InsertClient" event="create" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_052lsmi</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1rpw1c7</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_13pn53b</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="SequenceFlow_13pn53b" sourceRef="Task_07jc9fi" targetRef="Task_0b7suo4" />
@@ -35,17 +36,28 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{!notify}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:endEvent id="EndEvent_1hbwx77">
-      <bpmn:incoming>SequenceFlow_1v40mxw</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_080hri0</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_1v40mxw" sourceRef="Task_1l9wtr1" targetRef="EndEvent_1hbwx77" />
     <bpmn:userTask id="Task_1l9wtr1" name="Show Payment Reference">
       <bpmn:extensionElements>
         <camunda:taskListener class="org.camunda.demo.listeners.ShowMbReference" event="create" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_19egf5m</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_0kxqrt6</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1v40mxw</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_04y2oal</bpmn:outgoing>
     </bpmn:userTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1p8vynm">
+      <bpmn:incoming>SequenceFlow_04y2oal</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_080hri0</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1rpw1c7</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_04y2oal" sourceRef="Task_1l9wtr1" targetRef="ExclusiveGateway_1p8vynm" />
+    <bpmn:sequenceFlow id="SequenceFlow_080hri0" sourceRef="ExclusiveGateway_1p8vynm" targetRef="EndEvent_1hbwx77">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{next}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1rpw1c7" sourceRef="ExclusiveGateway_1p8vynm" targetRef="Task_07jc9fi">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{!next}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_02jaj7t">
@@ -91,15 +103,28 @@
         <di:waypoint x="847" y="161" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_1hbwx77_di" bpmnElement="EndEvent_1hbwx77">
-        <dc:Bounds x="947" y="103" width="36" height="36" />
+        <dc:Bounds x="1059" y="103" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1v40mxw_di" bpmnElement="SequenceFlow_1v40mxw">
-        <di:waypoint x="897" y="121" />
-        <di:waypoint x="947" y="121" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="UserTask_0l06qtn_di" bpmnElement="Task_1l9wtr1">
         <dc:Bounds x="797" y="81" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1p8vynm_di" bpmnElement="ExclusiveGateway_1p8vynm" isMarkerVisible="true">
+        <dc:Bounds x="960" y="96" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_04y2oal_di" bpmnElement="SequenceFlow_04y2oal">
+        <di:waypoint x="897" y="121" />
+        <di:waypoint x="960" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_080hri0_di" bpmnElement="SequenceFlow_080hri0">
+        <di:waypoint x="1010" y="121" />
+        <di:waypoint x="1059" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1rpw1c7_di" bpmnElement="SequenceFlow_1rpw1c7">
+        <di:waypoint x="985" y="146" />
+        <di:waypoint x="985" y="256" />
+        <di:waypoint x="307" y="256" />
+        <di:waypoint x="307" y="161" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
